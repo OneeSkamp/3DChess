@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 15997923}
   - component: {fileID: 15997922}
   m_Layer: 0
-  m_Name: Board Manager
+  m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,23 +149,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 15997921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6d36c3458f1a9e4f9aacdb6f52adb41, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e08ea96cf1979e4e81a791ff4b4f19a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackCell: {fileID: 2726964043002002061, guid: 230e3e87600972e409e033c11859a405, type: 3}
-  whiteCell: {fileID: 2691246195634653736, guid: 8c8a2bdc9da0ee5448e314503dd89b7e, type: 3}
-  whitePawn: {fileID: 1213357437349106, guid: cb6a8f6d20d524a85bf5d4d1c6ba3d93, type: 3}
-  whiteBishop: {fileID: 1223592777669084, guid: 3698dddfe4c0a4a8dadcdf81c3255943, type: 3}
-  whiteKing: {fileID: 1504342444523766, guid: de5f4888ca0e74c1ba4b9224759334f4, type: 3}
-  whiteKnight: {fileID: 1943414466066380, guid: 45e10aea18beb495d9489aed31b95270, type: 3}
-  whiteQueen: {fileID: 1097155551969228, guid: 55516a6c49a924127a8b226bfbb3cf46, type: 3}
-  whiteRook: {fileID: 1037745782791696, guid: ae91a18cadda2480e9478488d2142fde, type: 3}
-  blackPawn: {fileID: 1555947633139444, guid: 484e214fc05fe436393fd7787991ebfe, type: 3}
+  blackRook: {fileID: 1764167493807252, guid: 27b957161063143d6a75fad94db1125f, type: 3}
+  blackKnight: {fileID: 1830534316869998, guid: 396e9ff596f3340a3ba66f31bb9c83f8, type: 3}
   blackBishop: {fileID: 1916680518618882, guid: eec17d5f9090c4c949f55d97388bfec8, type: 3}
   blackKing: {fileID: 1822731811085762, guid: cd47671bc858649ed8445e605149f3e8, type: 3}
-  blackKnight: {fileID: 1830534316869998, guid: 396e9ff596f3340a3ba66f31bb9c83f8, type: 3}
   blackQueen: {fileID: 1996616484037168, guid: fd58da484cc87433689394934ae1baa1, type: 3}
-  blackRook: {fileID: 1764167493807252, guid: 27b957161063143d6a75fad94db1125f, type: 3}
+  blackPawn: {fileID: 1555947633139444, guid: 484e214fc05fe436393fd7787991ebfe, type: 3}
+  whiteRook: {fileID: 1037745782791696, guid: ae91a18cadda2480e9478488d2142fde, type: 3}
+  whiteKnight: {fileID: 1943414466066380, guid: 45e10aea18beb495d9489aed31b95270, type: 3}
+  whiteBishop: {fileID: 1223592777669084, guid: 3698dddfe4c0a4a8dadcdf81c3255943, type: 3}
+  whiteKing: {fileID: 1504342444523766, guid: de5f4888ca0e74c1ba4b9224759334f4, type: 3}
+  whiteQueen: {fileID: 1097155551969228, guid: 55516a6c49a924127a8b226bfbb3cf46, type: 3}
+  whitePawn: {fileID: 1213357437349106, guid: cb6a8f6d20d524a85bf5d4d1c6ba3d93, type: 3}
+  black: {fileID: 2100000, guid: d025534104c7720439c2a3ac57cdafb3, type: 2}
+  white: {fileID: 2100000, guid: e2098a3b7c029c445a68bb707bb6ca48, type: 2}
+  cell: {fileID: 1850350265348017695, guid: f40caafbd1cfb8047a4d336354e765c7, type: 3}
 --- !u!4 &15997923
 Transform:
   m_ObjectHideFlags: 0
@@ -349,10 +350,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.45818275, y: -0.5385801, z: 0.45818275, w: 0.5385801}
+  m_LocalPosition: {x: 4.77, y: 9.47, z: 3.49}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 99.22299, y: 90, z: 180}
