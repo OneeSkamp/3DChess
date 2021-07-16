@@ -58,7 +58,7 @@ public class BoardBuilder : MonoBehaviour {
                 cell.GetComponent<Cell>().xPos = x;
                 cell.GetComponent<Cell>().yPos = y;
 
-               if (cell.GetComponent<Cell>().figure != null) {
+                if (cell.GetComponent<Cell>().figure != null) {
                     GameObject figure = Instantiate(cell.GetComponent<Cell>().figure);
                     figure.transform.position = new Vector3(cell.transform.position.x, 0.5f, cell.transform.position.z);
                 }

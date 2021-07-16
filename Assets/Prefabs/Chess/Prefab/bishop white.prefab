@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4700783612619404}
   - component: {fileID: 33579944788633322}
   - component: {fileID: 23816763467880910}
+  - component: {fileID: -2817977659565229878}
   m_Layer: 0
   m_Name: bishop white
-  m_TagString: Untagged
+  m_TagString: Figure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -81,3 +82,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-2817977659565229878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223592777669084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ded0593f277cf645abb3a0ec70b6f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: Bishop
+  color: White
