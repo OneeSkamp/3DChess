@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardBuilder : MonoBehaviour
-{
+public class BoardBuilder : MonoBehaviour {
+    [SerializeField] private Material black;
+    [SerializeField] private Material white;
     [SerializeField] private GameObject blackRook;
     [SerializeField] private GameObject blackKnight;
     [SerializeField] private GameObject blackBishop;
@@ -17,9 +18,6 @@ public class BoardBuilder : MonoBehaviour
     [SerializeField] private GameObject whiteKing;
     [SerializeField] private GameObject whiteQueen;
     [SerializeField] private GameObject whitePawn;
-
-    [SerializeField] private Material black;
-    [SerializeField] private Material white;
 
     private GameObject[,] initialFigurePlacement;
 
@@ -44,14 +42,13 @@ public class BoardBuilder : MonoBehaviour
 
                 cell = Instantiate(cell); 
 
-                if (counter % 2 == 0) {
+                if (counter % 2 == 0) {                    
+                    cell.GetComponent<Cell>().baceColor = "Black";
                     cell.GetComponent<Renderer>().material = black;
-                    cell.GetComponent<Cell>().color = "Black";
 
                 } else {
-
+                    cell.GetComponent<Cell>().baceColor = "White";
                     cell.GetComponent<Renderer>().material = white;
-                    cell.GetComponent<Cell>().color = "White";
                 }
 
                 gridArray[x, y] = cell;
@@ -61,7 +58,7 @@ public class BoardBuilder : MonoBehaviour
                 cell.GetComponent<Cell>().xPos = x;
                 cell.GetComponent<Cell>().yPos = y;
 
-                if (cell.GetComponent<Cell>().figure != null) {
+               if (cell.GetComponent<Cell>().figure != null) {
                     GameObject figure = Instantiate(cell.GetComponent<Cell>().figure);
                     figure.transform.position = new Vector3(cell.transform.position.x, 0.5f, cell.transform.position.z);
                 }
