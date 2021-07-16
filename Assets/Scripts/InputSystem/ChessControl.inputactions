@@ -1,0 +1,58 @@
+{
+    "name": "ChessControl",
+    "maps": [
+        {
+            "name": "Mouse",
+            "id": "a49dfe6b-7456-4098-9b8f-3b4d90c3f885",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "3eb17c0b-8b98-4788-980c-34fdc8ab972a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "b17fd8ed-f238-4264-8a30-f109e89ecf06",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "cf86b32c-153b-4337-a519-cb781d98099c",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse and Keyboard",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e1a68c10-6147-4693-b192-56ab8a6e43fe",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse and Keyboard",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Mouse and Keyboard",
+            "bindingGroup": "Mouse and Keyboard",
+            "devices": []
+        }
+    ]
+}
