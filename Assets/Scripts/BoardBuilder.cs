@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardBuilder : MonoBehaviour {
@@ -27,20 +25,19 @@ public class BoardBuilder : MonoBehaviour {
 
 
     private void Start() {
-
         GenerationInitialFigurePlacement();
         CreateGrid();
     }
 
     private void CreateGrid() {
-        gridArray = new GameObject[8, 8];
+        gridArray = new GameObject[12, 12];
 
-        for (int x = 0; x < gridArray.GetLength(0); x++) {
+        for (int x = 2; x < gridArray.GetLength(0) - 2; x++) {
             int counter = x;
 
-            for (int y = 0; y < gridArray.GetLength(1); y++) {
+            for (int y = 2; y < gridArray.GetLength(1) - 2; y++) {
 
-                cell = Instantiate(cell); 
+                cell = Instantiate(cell);
 
                 if (counter % 2 == 0) {                    
                     cell.GetComponent<Cell>().baceColor = "Black";
@@ -54,15 +51,19 @@ public class BoardBuilder : MonoBehaviour {
                 gridArray[x, y] = cell;
 
                 cell.transform.position = new Vector3(x, 0.0f, y);
-                cell.GetComponent<Cell>().figure = initialFigurePlacement[x, y];
                 cell.GetComponent<Cell>().xPos = x;
                 cell.GetComponent<Cell>().yPos = y;
+                cell.GetComponent<Cell>().figure = null;
+                if (initialFigurePlacement[x-2, y-2] != null)
+                {
+                    GameObject figure = Instantiate(initialFigurePlacement[x-2, y-2]);
 
-               if (cell.GetComponent<Cell>().figure != null) {
-                    GameObject figure = Instantiate(cell.GetComponent<Cell>().figure);
+                    cell.GetComponent<Cell>().figure = figure;
                     figure.transform.position = new Vector3(cell.transform.position.x, 0.5f, cell.transform.position.z);
-                }
+                    figure.GetComponent<Figure>().step = 1;
 
+                    Debug.Log("1");
+                }
                 counter++;
             }
         }
