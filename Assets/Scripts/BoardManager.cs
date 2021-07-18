@@ -12,6 +12,8 @@ public class BoardManager : MonoBehaviour {
     private GameObject[,] gridArray;
     private Vector3 mousePosition = new Vector3();
 
+    private bool whiteMove = true;
+
     private void Awake() {
         chessAction = new ChessControl();
         chessAction.Mouse.Click.performed += ctx => OnClick();
@@ -33,20 +35,12 @@ public class BoardManager : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hitInfo;
 
+
         if (Physics.Raycast(ray, out hitInfo)) {
 
             if (activeCell == null) {
                 activeCell = hitInfo.collider.gameObject;
                 activeCell.GetComponent<Cell>().active = true;
-                if (activeCell.GetComponent<Cell>().figure != null) {
-                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type);
-                }
-            }
-            else if (activeCell != null && hitInfo.collider.gameObject.GetComponent<Cell>().figure != null) {
-                activeCell.GetComponent<Cell>().active = false;
-                activeCell = hitInfo.collider.gameObject;
-                activeCell.GetComponent<Cell>().active = true;
-
                 if (activeCell.GetComponent<Cell>().figure != null) {
                     GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type);
                 }
@@ -57,91 +51,109 @@ public class BoardManager : MonoBehaviour {
                 activeCell.GetComponent<Cell>().active = false;
                 activeCell = null;
             }
+            else if (activeCell != null && hitInfo.collider.gameObject.GetComponent<Cell>().figure != null) {
+                activeCell.GetComponent<Cell>().active = false;
+                activeCell = hitInfo.collider.gameObject;
+                activeCell.GetComponent<Cell>().active = true;
+
+                if (activeCell.GetComponent<Cell>().figure != null) {
+                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type);
+                }
+            }          
         }     
     }
 
     private void CleaningCanMoveCells() {
 
         foreach (GameObject cell in gridArray) {
-            cell.GetComponent<Cell>().canMove = false;    
+            if (cell != null) {
+                cell.GetComponent<Cell>().canMove = false;   
+            }            
         }
     }
 
     private void GetFigureType(string figureType) {
         
         CleaningCanMoveCells();
-        
-        switch (figureType) {
-            case "BPawn":
-                Debug.Log("GetBpawn");
-                GetMovePawnMap();
-                break;
+        if (whiteMove) {
+            switch (figureType)
+            {
+                case "WPawn":
+                    Debug.Log("GetBpawn");
+                    GetMovePawnMap(-1);
+                    break;
+            }
+        }
+        else {
+            switch (figureType) {
+                case "BPawn":
+                    Debug.Log("GetBpawn");
+                    GetMovePawnMap(1);
+                    break;
+            }
         }
     }
 
-    private void CleaningBoard() {
-        var figures = GameObject.FindGameObjectsWithTag( "Figure" ); 
-        for(int i = 0; i < figures.Length; i++){
-            Destroy( figures[i] );  
-        }      
-    }
-
-    private void Render() {
-        
-        CleaningBoard();
+    private void Render() {     
         
         foreach(GameObject cell in gridArray) {
-            if (cell.GetComponent<Cell>().active) {
-                cell.GetComponent<Renderer>().material = yelow;
-            } else {
-                if (cell.GetComponent<Cell>().baceColor == "Black") {
-                    cell.GetComponent<Renderer>().material = black;     
+            if (cell != null) {
+                if (cell.GetComponent<Cell>().active) {
+                    cell.GetComponent<Renderer>().material = yelow;
+                } else {
+                    if (cell.GetComponent<Cell>().baceColor == "Black") {
+                        cell.GetComponent<Renderer>().material = black;     
+                    }
+                    if (cell.GetComponent<Cell>().baceColor == "White") {
+                        cell.GetComponent<Renderer>().material = white;     
+                    }
+                    if (cell.GetComponent<Cell>().canMove) {
+                        cell.GetComponent<Renderer>().material = blue;
+                    }
                 }
-                if (cell.GetComponent<Cell>().baceColor == "White") {
-                    cell.GetComponent<Renderer>().material = white;     
-                }
-                if (cell.GetComponent<Cell>().canMove) {
-                    cell.GetComponent<Renderer>().material = blue;
-                }
-            }
-
-            if (cell.GetComponent<Cell>().figure != null) {               
-                GameObject figure = Instantiate(cell.GetComponent<Cell>().figure);
-                figure.transform.position = new Vector3(cell.transform.position.x, 0.5f, cell.transform.position.z);
             }
         } 
     }
 
     private void MoveFigure(GameObject cellForMove) {
+        if(cellForMove.GetComponent<Cell>().figure != null){
+            Destroy(cellForMove.GetComponent<Cell>().figure); 
+        }
         cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
         activeCell.GetComponent<Cell>().figure = null;
+        cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+        cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+        whiteMove = !whiteMove;
     }
 
-    private void GetMovePawnMap() {
+    private void GetMovePawnMap(int i) {
 
-        GameObject figure = activeCell.GetComponent<Cell>().figure;           
+        int step = activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step;           
+        int posX = activeCell.GetComponent<Cell>().xPos;
+        int posY = activeCell.GetComponent<Cell>().yPos;
 
-        if (figure.GetComponent<Figure>().step == 1 && activeCell != null) {
+        Debug.Log($"{posX + i} {posY}");
 
-            int step = figure.GetComponent<Figure>().step;
+        if (gridArray[posX + i, posY] != null && gridArray[posX + i, posY].GetComponent<Cell>().figure == null) {                   
+            gridArray[posX + i, posY].GetComponent<Cell>().canMove = true;
+        }
 
-            int posX = activeCell.GetComponent<Cell>().xPos;
-            int posY = activeCell.GetComponent<Cell>().yPos;
-
-            Debug.Log($"{posX + 1} {posY}");
-
-            if (gridArray[posX + 1, posY].GetComponent<Cell>().figure == null)
-            {                   
-                gridArray[posX + 1, posY].GetComponent<Cell>().canMove = true;
+        if (step == 1) {
+            if (gridArray[posX + 2 * i, posY] != null && gridArray[posX + 2 * i, posY].GetComponent<Cell>().figure == null) {
+                    gridArray[posX + 2 * i, posY].GetComponent<Cell>().canMove = true;
             }
+        } 
 
-            if (step == 1)
-            {
-                if (gridArray[posX + 2, posY].GetComponent<Cell>().figure == null)
-                {
-                    gridArray[posX + 2, posY].GetComponent<Cell>().canMove = true;
-                }
-            } 
+        if (gridArray[posX + i, posY + 1] != null && gridArray[posX + i, posY+1].GetComponent<Cell>().figure != null 
+            && gridArray[posX + i, posY + 1].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
+            
+            gridArray[posX +  i, posY+1].GetComponent<Cell>().canMove = true;
+        }
+
+        if (gridArray[posX + i, posY - 1] != null && gridArray[posX + i, posY - 1].GetComponent<Cell>().figure != null 
+            && gridArray[posX + i, posY - 1].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
+            
+            gridArray[posX + i, posY - 1].GetComponent<Cell>().canMove = true;
         }
     }
 }
