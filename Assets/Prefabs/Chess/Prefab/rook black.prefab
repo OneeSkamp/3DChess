@@ -94,5 +94,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ded0593f277cf645abb3a0ec70b6f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: Rook
+  type: BRook
   color: Black
+  step: 0
