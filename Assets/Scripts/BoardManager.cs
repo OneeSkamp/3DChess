@@ -9,7 +9,9 @@ public class BoardManager : MonoBehaviour {
 
     private GameObject activeCell;
     private ChessControl chessAction;
-    private GameObject[,]gridArray;
+    private bool pawnAttack = false;
+    private GameObject[,] gridArray;
+    private bool [,] kingIsAttackedMap = new bool [8,8];
     private Vector3 mousePosition = new Vector3();
 
     private bool whiteMove = true;
@@ -18,8 +20,13 @@ public class BoardManager : MonoBehaviour {
         chessAction = new ChessControl();
         chessAction.Mouse.Click.performed += ctx => OnClick();
         chessAction.Mouse.Click.performed += ctx => Render();
+
     }
 
+    private void Start()
+    {
+        gridArray = board.GetComponent<BoardBuilder>().gridArray;
+    }
     private void OnEnable() {
         chessAction.Enable();    
     }
@@ -29,7 +36,7 @@ public class BoardManager : MonoBehaviour {
     }
 
     private void OnClick() {
-        gridArray = board.GetComponent<BoardBuilder>().gridArray;
+        
         mousePosition = chessAction.Mouse.MousePosition.ReadValue<Vector2>();
 
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
@@ -42,13 +49,15 @@ public class BoardManager : MonoBehaviour {
                 activeCell = hitInfo.collider.gameObject;
                 activeCell.GetComponent<Cell>().active = true;
                 if (activeCell.GetComponent<Cell>().figure != null) {
-                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type);
+                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type, whiteMove);
                 }
             }
             else if (activeCell != null && hitInfo.collider.gameObject.GetComponent<Cell>().canMove) {
                 CleaningCanMoveCells();
                 MoveFigure(hitInfo.collider.gameObject);
                 activeCell.GetComponent<Cell>().active = false;
+                GetKingIsAttackedMap();
+
                 activeCell = null;
             }
             else if (activeCell != null && hitInfo.collider.gameObject.GetComponent<Cell>().figure != null) {
@@ -57,7 +66,7 @@ public class BoardManager : MonoBehaviour {
                 activeCell.GetComponent<Cell>().active = true;
 
                 if (activeCell.GetComponent<Cell>().figure != null) {
-                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type);
+                    GetFigureType(activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type, whiteMove);
                 }
             }          
         }     
@@ -72,10 +81,10 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
-    private void GetFigureType(string figureType) {
+    private void GetFigureType(string figureType, bool color) {
         
         CleaningCanMoveCells();
-        if (whiteMove) {
+        if (color) {
             switch (figureType)
             {
                 case "WPawn":
@@ -163,17 +172,19 @@ public class BoardManager : MonoBehaviour {
         int posX = activeCell.GetComponent<Cell>().xPos;
         int posY = activeCell.GetComponent<Cell>().yPos;
 
-        Debug.Log($"{posX + i} {posY}");
+        //Debug.LogDebug.Log($"{posX + i} {posY}");
+        if (!pawnAttack) {
+            if (gridArray[posX + i, posY] != null && gridArray[posX + i, posY].GetComponent<Cell>().figure == null) {                   
+                gridArray[posX + i, posY].GetComponent<Cell>().canMove = true;
+            }
 
-        if (gridArray[posX + i, posY] != null && gridArray[posX + i, posY].GetComponent<Cell>().figure == null) {                   
-            gridArray[posX + i, posY].GetComponent<Cell>().canMove = true;
+            if (step == 1) {
+                if (gridArray[posX + 2 * i, posY] != null && gridArray[posX + 2 * i, posY].GetComponent<Cell>().figure == null) {
+                        gridArray[posX + 2 * i, posY].GetComponent<Cell>().canMove = true;
+                }
+            } 
         }
 
-        if (step == 1) {
-            if (gridArray[posX + 2 * i, posY] != null && gridArray[posX + 2 * i, posY].GetComponent<Cell>().figure == null) {
-                    gridArray[posX + 2 * i, posY].GetComponent<Cell>().canMove = true;
-            }
-        } 
 
         if (gridArray[posX + i, posY + 1] != null && gridArray[posX + i, posY+1].GetComponent<Cell>().figure != null 
             && gridArray[posX + i, posY + 1].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
@@ -432,7 +443,7 @@ public class BoardManager : MonoBehaviour {
         int posY = activeCell.GetComponent<Cell>().yPos;
 
         if (gridArray[posX + 1, posY] != null && gridArray[posX + 1, posY ].GetComponent<Cell>().figure != null 
-            && gridArray[posX + 1, posY + 1].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
+            && gridArray[posX + 1, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
     
         } else if (gridArray[posX + 1, posY] != null && gridArray[posX + 1, posY].GetComponent<Cell>().figure == null) {                   
             gridArray[posX + 1, posY].GetComponent<Cell>().canMove = true;
@@ -530,4 +541,47 @@ public class BoardManager : MonoBehaviour {
         }                          
     }
 
+    private void GetKingIsAttackedMap() {
+        
+        string color;
+
+        if (whiteMove)
+            color = "White";
+        else
+            color = "Black";
+
+        foreach (GameObject cell in gridArray) {
+            if (cell != null && cell.GetComponent<Cell>().figure != null && cell.GetComponent<Cell>().figure.GetComponent<Figure>().color != color) {
+                Debug.Log("+");
+                activeCell = cell;
+                pawnAttack = true;
+                GetFigureType(cell.GetComponent<Cell>().figure.GetComponent<Figure>().type,!whiteMove);
+                pawnAttack = false;
+                for(int i = 0; i < 8; i++){
+                    for(int j = 0; j < 8; j++){
+                        if (gridArray[i + 2, j + 2].GetComponent<Cell>().canMove==true) {
+                            
+                            kingIsAttackedMap[i, j] = true;
+                            gridArray[i + 2, j + 2].GetComponent<Cell>().canMove = false;
+                        }
+                    }
+                }
+                activeCell = null;
+            }
+        }
+
+        for(int i = 0; i < 8;i++){
+            Debug.Log($"{kingIsAttackedMap[i,0]}   {kingIsAttackedMap[i, 1]}   {kingIsAttackedMap[i, 2]}   {kingIsAttackedMap[i, 3]}   {kingIsAttackedMap[i, 4]}   {kingIsAttackedMap[i, 5]}   {kingIsAttackedMap[i, 6]}  {kingIsAttackedMap[i, 7]}");
+        }
+    }
+
+    private void CleaningkingIsAttackedMap() {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                kingIsAttackedMap[i, j] = false;
+            }
+        }
+    }
 }

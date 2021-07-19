@@ -23,10 +23,13 @@ public class BoardBuilder : MonoBehaviour {
 
     public GameObject[,] gridArray { get; private set; }
 
-
-    private void Start() {
+    private void Awake()
+    {
         GenerationInitialFigurePlacement();
         CreateGrid();
+    }
+    private void Start() {
+        
     }
 
     private void CreateGrid() {
@@ -62,7 +65,7 @@ public class BoardBuilder : MonoBehaviour {
                     figure.transform.position = new Vector3(cell.transform.position.x, 0.5f, cell.transform.position.z);
                     figure.GetComponent<Figure>().step = 1;
 
-                    Debug.Log("1");
+                    //Debug.Log("1");
                 }
                 counter++;
             }
