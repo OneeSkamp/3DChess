@@ -8,4 +8,5 @@ public class Cell : MonoBehaviour {
     public int yPos;
     public bool active = false;
     public bool canMove = false;
+    public bool check;
 }
