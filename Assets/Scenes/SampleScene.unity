@@ -158,6 +158,7 @@ MonoBehaviour:
   black: {fileID: 2100000, guid: d025534104c7720439c2a3ac57cdafb3, type: 2}
   white: {fileID: 2100000, guid: e2098a3b7c029c445a68bb707bb6ca48, type: 2}
   blue: {fileID: 2100000, guid: d21ba898f394a0b4c80e9ed816b15230, type: 2}
+  red: {fileID: 2100000, guid: 6c6b4f7f6ceccbc43a78fd3a7a34ef85, type: 2}
 --- !u!4 &362752430
 Transform:
   m_ObjectHideFlags: 0

@@ -11,9 +11,11 @@ public class BoardManager : MonoBehaviour {
     private GameObject activeCell;
     private GameObject checkCell;
     private GameObject attackedCell;
-    private GameObject blackKing;
-    private GameObject whiteKing;
+    private GameObject king;
+    
+    private GameObject currentFigure;
     private ChessControl chessAction;
+    
     private bool pawnAttack = false;
     private GameObject[,] gridArray;
     private bool [,] kingIsAttackedMap = new bool [8,8];
@@ -63,8 +65,8 @@ public class BoardManager : MonoBehaviour {
                  
                 MoveFigure(hitInfo.collider.gameObject);
                 activeCell.GetComponent<Cell>().active = false;
-                GetKingIsAttackedMap();
-                GetDefenceKingMap();
+                GetKingIsAttackedMap(kingIsAttackedMap);
+                //GetDefenceKingMap();
                 activeCell = null;                        
                     
             }
@@ -176,7 +178,7 @@ public class BoardManager : MonoBehaviour {
         cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
 
         whiteMove = !whiteMove;
-        CleaningKingIsAttackedMap();
+        CleaningKingIsAttackedMap(kingIsAttackedMap);
     }
 
     private void GetMovePawnMap(int i) {
@@ -196,9 +198,20 @@ public class BoardManager : MonoBehaviour {
                         gridArray[posX + 2 * i, posY].GetComponent<Cell>().canMove = true;
                 }
             } 
+        } else {
+            if (gridArray[posX + i, posY + 1] != null) {
+
+                gridArray[posX + i, posY + 1].GetComponent<Cell>().canMove = true;
+            }
+
+            if (gridArray[posX + i, posY - 1] != null) {
+
+                gridArray[posX + i, posY - 1].GetComponent<Cell>().canMove = true;
+            }
+
         }
 
-
+        
         if (gridArray[posX + i, posY + 1] != null && gridArray[posX + i, posY+1].GetComponent<Cell>().figure != null 
             && gridArray[posX + i, posY + 1].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
             
@@ -509,8 +522,7 @@ public class BoardManager : MonoBehaviour {
             && !kingIsAttackedMap[posX - 2, posY - 2 + 1]) {
                 
             gridArray[posX, posY + 1].GetComponent<Cell>().canMove = true;        
-        }
-        
+        }       
 
 ////////////////////////////
 
@@ -564,10 +576,10 @@ public class BoardManager : MonoBehaviour {
             && !kingIsAttackedMap[posX - 2 - 1, posY -2 + 1]) {
                 
             gridArray[posX -  1, posY + 1].GetComponent<Cell>().canMove = true;        
-        }                          
+        }
     }
 
-    private void GetKingIsAttackedMap() {
+    private void GetKingIsAttackedMap(bool[,] kingIsAttackedMap) {
         
         string color;
 
@@ -607,10 +619,10 @@ public class BoardManager : MonoBehaviour {
         // for(int i = 0; i < 8;i++){
         //     Debug.Log($"{kingIsAttackedMap[i,0]}   {kingIsAttackedMap[i, 1]}   {kingIsAttackedMap[i, 2]}   {kingIsAttackedMap[i, 3]}   {kingIsAttackedMap[i, 4]}   {kingIsAttackedMap[i, 5]}   {kingIsAttackedMap[i, 6]}  {kingIsAttackedMap[i, 7]}");
         // }
-        CheckKing();
+        CheckKing(kingIsAttackedMap);
     }
 
-    private void CleaningKingIsAttackedMap() {
+    private void CleaningKingIsAttackedMap(bool [,] kingIsAttackedMap) {
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 8; j++)
@@ -628,7 +640,7 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
-    private void CheckKing() {
+    private bool CheckKing( bool [,] kingIsAttackedMap) {
         if (whiteMove) {
             
             foreach (GameObject cell in gridArray) {
@@ -638,20 +650,20 @@ public class BoardManager : MonoBehaviour {
                     int posY = cell.GetComponent<Cell>().yPos;
                     Debug.Log("whiteMove");
 
+
                     if (kingIsAttackedMap[posX - 2, posY - 2] == true) {
                         
                         Debug.Log("Wcheck");
                         cell.GetComponent<Cell>().check = true;
-                        checkCell = cell;
+                        checkCell = cell;            
                         cell.GetComponent<Cell>().figure.GetComponent<King>().checkForKing = true;
                         Debug.Log(cell.GetComponent<Cell>().figure.GetComponent<King>().checkForKing);
-                      //  GetDefenceKingMap();                  
+                        return true;
                     }  
                 }
-            } 
-        }
-
-        if (!whiteMove) {
+            }
+            return false;
+        } else { 
             
             foreach (GameObject cell in gridArray) {
                 if (cell != null && cell.GetComponent<Cell>().figure != null && cell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing") {
@@ -667,40 +679,13 @@ public class BoardManager : MonoBehaviour {
                         checkCell = cell;
                         cell.GetComponent<Cell>().figure.GetComponent<King>().checkForKing = true;
                         Debug.Log(cell.GetComponent<Cell>().figure.GetComponent<King>().checkForKing);
-                       // GetDefenceKingMap();
+                        
+                        return true;
                     }
                 }
+
             }
+            return false;
         }   
-    }
-
-    private void GetDefenceKingMap() {
-        if (attackedCell != null) {
-            int xPos = attackedCell.GetComponent<Cell>().xPos;
-            int yPos = attackedCell.GetComponent<Cell>().yPos;
-
-            defenceKingMap[xPos -2, yPos -2] = false;
-
-            GetFigureType(attackedCell.GetComponent<Cell>().figure.GetComponent<Figure>().type, whiteMove);
-            foreach (GameObject cell in gridArray) {
-                if (cell != null && cell.GetComponent<Cell>().figure != null) {
-                    for (int i = 0; i < 8; i++) {
-                        for (int j = 0; j < 8; j++) {
-                            if (gridArray[i + 2, j + 2].GetComponent<Cell>().canMove == true) {
-                                defenceKingMap[i, j] = false;
-                            } else {
-                                defenceKingMap[i, j] = true;
-                            }              
-                        }
-                    }
-                }
-            }   
-        }
-
-        for(int i = 0; i < 8;i++){
-            Debug.Log($"{defenceKingMap[i,0]}   {defenceKingMap[i, 1]}   {defenceKingMap[i, 2]}   {defenceKingMap[i, 3]}   {defenceKingMap[i, 4]}   {defenceKingMap[i, 5]}   {defenceKingMap[i, 6]}  {defenceKingMap[i, 7]}");
-        }
-        
-
     }
 }
