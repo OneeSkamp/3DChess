@@ -1,17 +1,40 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardManager : MonoBehaviour {
+    [SerializeField] private GameObject blackRook;
+    [SerializeField] private GameObject blackKnight;
+    [SerializeField] private GameObject blackBishop;
+    [SerializeField] private GameObject blackQueen;
+
+    [SerializeField] private GameObject whiteRook;
+    [SerializeField] private GameObject whiteKnight;
+    [SerializeField] private GameObject whiteBishop;
+    [SerializeField] private GameObject whiteQueen;
+
+    [SerializeField] private Canvas canvasForChangeFigure;
     [SerializeField] private GameObject board;
     [SerializeField] private Material yelow;
     [SerializeField] private Material black;
     [SerializeField] private Material white;
     [SerializeField] private Material blue;
     [SerializeField] private Material red;
+    public Button changePawnToQueen;
+    public Button changePawnToKnight;
+    public Button changePawnToBishop;
+    public Button changePawnToRook;
 
     private GameObject activeCell;
+    private GameObject changeCell;
+    private GameObject newActiveCell;
     private GameObject checkCell;
     private GameObject attackedCell;
     private GameObject king;
+
+    private GameObject queenForChange;
+    private GameObject knightForChange;
+    private GameObject bishopForChange;
+    private GameObject rookForChange;
     
     private GameObject currentFigure;
     private ChessControl chessAction;
@@ -22,6 +45,9 @@ public class BoardManager : MonoBehaviour {
     private bool [,] defenceKingMap = new bool [8,8];
     private Vector3 mousePosition = new Vector3();
 
+    private int helpPosX;
+    private int helpPosY;
+
     private bool whiteMove = true;
 
     private void Awake() {
@@ -30,10 +56,18 @@ public class BoardManager : MonoBehaviour {
         chessAction.Mouse.Click.performed += ctx => Render();
     }
 
+    private void Update() {
+        //Debug.Log($"{helpPosX} {helpPosY}");
+    }
+
     private void Start()
     {
         gridArray = board.GetComponent<BoardBuilder>().gridArray;
 
+		changePawnToQueen.onClick.AddListener(() => ChangeFigure(changeCell, queenForChange));
+        changePawnToKnight.onClick.AddListener(() => ChangeFigure(changeCell, knightForChange));
+        changePawnToRook.onClick.AddListener(() => ChangeFigure(changeCell, rookForChange));
+        changePawnToBishop.onClick.AddListener(() => ChangeFigure(changeCell, bishopForChange));
     }
     private void OnEnable() {
         chessAction.Enable();    
@@ -176,13 +210,14 @@ public class BoardManager : MonoBehaviour {
         activeCell.GetComponent<Cell>().figure = null;
         cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
         cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
-
+        //helpPosX = cellForMove.GetComponent<Cell>().xPos;
+        //helpPosX = cellForMove.GetComponent<Cell>().yPos;
         whiteMove = !whiteMove;
         CleaningKingIsAttackedMap(kingIsAttackedMap);
     }
 
     private void GetMovePawnMap(int i) {
-
+        
         int step = activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step;           
         int posX = activeCell.GetComponent<Cell>().xPos;
         int posY = activeCell.GetComponent<Cell>().yPos;
@@ -223,6 +258,40 @@ public class BoardManager : MonoBehaviour {
             
             gridArray[posX + i, posY - 1].GetComponent<Cell>().canMove = true;
         }
+
+        if (i == -1 && posX == 2) {
+
+            canvasForChangeFigure.GetComponent<Canvas>().enabled = true;
+
+            Destroy(activeCell.GetComponent<Cell>().figure);
+            activeCell.GetComponent<Cell>().figure = null;
+            changeCell = gridArray[posX, posY];
+            queenForChange = whiteQueen;
+            rookForChange = whiteRook;
+            bishopForChange = whiteBishop;
+            knightForChange = whiteKnight; 
+        }
+
+        if (i == 1 && posX == 9) {
+
+            canvasForChangeFigure.GetComponent<Canvas>().enabled = true;
+
+            Destroy(activeCell.GetComponent<Cell>().figure);
+            activeCell.GetComponent<Cell>().figure = null;
+            changeCell = gridArray[posX, posY];
+            queenForChange = blackQueen;
+            rookForChange = blackRook;
+            bishopForChange = blackBishop;
+            knightForChange = blackKnight; 
+        }
+    }
+
+    public void ChangeFigure(GameObject cell, GameObject newFigure) {
+        GameObject figure = Instantiate(newFigure);
+        cell.GetComponent<Cell>().figure = figure;
+        figure.transform.position = new Vector3 (cell.transform.position.x, 0.5f, cell.transform.position.z);
+        Debug.Log("Changefigure");
+        canvasForChangeFigure.GetComponent<Canvas>().enabled = false;
     }
 
     private void GetMoveKnightMap() {
