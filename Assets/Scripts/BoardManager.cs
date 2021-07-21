@@ -220,6 +220,7 @@ public class BoardManager : MonoBehaviour {
             gridArray[9, 4].GetComponent<Cell>().figure = gridArray[9, 2].GetComponent<Cell>().figure;
             gridArray[9, 2].GetComponent<Cell>().figure = null;
             gridArray[9, 4].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[9, 4].transform.position.x, 0.5f, gridArray[9, 4].transform.position.z);
+            whiteMove = !whiteMove;
 
         } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "WKing" 
             && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
@@ -232,6 +233,7 @@ public class BoardManager : MonoBehaviour {
             gridArray[9, 6].GetComponent<Cell>().figure = gridArray[9, 9].GetComponent<Cell>().figure;
             gridArray[9, 9].GetComponent<Cell>().figure = null;
             gridArray[9, 6].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[9, 6].transform.position.x, 0.5f, gridArray[9, 6].transform.position.z);
+            whiteMove = !whiteMove;
 
         } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" 
             && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
@@ -244,6 +246,7 @@ public class BoardManager : MonoBehaviour {
             gridArray[2, 4].GetComponent<Cell>().figure = gridArray[2, 2].GetComponent<Cell>().figure;
             gridArray[2, 2].GetComponent<Cell>().figure = null;
             gridArray[2, 4].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[2, 4].transform.position.x, 0.5f, gridArray[2, 4].transform.position.z);
+            whiteMove = !whiteMove;
 
         } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" 
             && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
@@ -256,6 +259,7 @@ public class BoardManager : MonoBehaviour {
             gridArray[2, 6].GetComponent<Cell>().figure = gridArray[2, 9].GetComponent<Cell>().figure;
             gridArray[2, 9].GetComponent<Cell>().figure = null;
             gridArray[2, 6].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[2, 6].transform.position.x, 0.5f, gridArray[2, 6].transform.position.z);
+            whiteMove = !whiteMove;
 
         }
         else {
