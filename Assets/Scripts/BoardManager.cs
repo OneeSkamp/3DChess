@@ -45,9 +45,6 @@ public class BoardManager : MonoBehaviour {
     private bool [,] defenceKingMap = new bool [8,8];
     private Vector3 mousePosition = new Vector3();
 
-    private int helpPosX;
-    private int helpPosY;
-
     private bool whiteMove = true;
 
     private void Awake() {
@@ -204,18 +201,71 @@ public class BoardManager : MonoBehaviour {
     }
 
     private void MoveFigure(GameObject cellForMove) {
-        if(cellForMove.GetComponent<Cell>().figure != null){
+        int xPos = cellForMove.GetComponent<Cell>().xPos;
+        int yPos = cellForMove.GetComponent<Cell>().yPos;
+
+        if (cellForMove.GetComponent<Cell>().figure != null){
             Destroy(cellForMove.GetComponent<Cell>().figure); 
         }
+        CleaningCanNextMoveCells();
         CleaningCheckedCells();
-        cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
-        activeCell.GetComponent<Cell>().figure = null;
-        cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
-        cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
-        //helpPosX = cellForMove.GetComponent<Cell>().xPos;
-        //helpPosX = cellForMove.GetComponent<Cell>().yPos;
-        whiteMove = !whiteMove;
-        CleaningKingIsAttackedMap(kingIsAttackedMap);
+        if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "WKing" 
+            && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
+            && xPos == 9 && yPos == 3) {
+            cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
+            activeCell.GetComponent<Cell>().figure = null;
+            cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+            cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+
+            gridArray[9, 4].GetComponent<Cell>().figure = gridArray[9, 2].GetComponent<Cell>().figure;
+            gridArray[9, 2].GetComponent<Cell>().figure = null;
+            gridArray[9, 4].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[9, 4].transform.position.x, 0.5f, gridArray[9, 4].transform.position.z);
+
+        } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "WKing" 
+            && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
+            && xPos == 9 && yPos == 7) {
+            cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
+            activeCell.GetComponent<Cell>().figure = null;
+            cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+            cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+
+            gridArray[9, 6].GetComponent<Cell>().figure = gridArray[9, 9].GetComponent<Cell>().figure;
+            gridArray[9, 9].GetComponent<Cell>().figure = null;
+            gridArray[9, 6].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[9, 6].transform.position.x, 0.5f, gridArray[9, 6].transform.position.z);
+
+        } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" 
+            && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
+            && xPos == 2 && yPos == 3) {
+            cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
+            activeCell.GetComponent<Cell>().figure = null;
+            cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+            cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+
+            gridArray[2, 4].GetComponent<Cell>().figure = gridArray[2, 2].GetComponent<Cell>().figure;
+            gridArray[2, 2].GetComponent<Cell>().figure = null;
+            gridArray[2, 4].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[2, 4].transform.position.x, 0.5f, gridArray[2, 4].transform.position.z);
+
+        } else if (activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" 
+            && activeCell.GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 
+            && xPos == 2 && yPos == 7) {
+            cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
+            activeCell.GetComponent<Cell>().figure = null;
+            cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+            cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+
+            gridArray[2, 6].GetComponent<Cell>().figure = gridArray[2, 9].GetComponent<Cell>().figure;
+            gridArray[2, 9].GetComponent<Cell>().figure = null;
+            gridArray[2, 6].GetComponent<Cell>().figure.transform.position = new Vector3(gridArray[2, 6].transform.position.x, 0.5f, gridArray[2, 6].transform.position.z);
+
+        }
+        else {
+            cellForMove.GetComponent<Cell>().figure = activeCell.GetComponent<Cell>().figure;
+            activeCell.GetComponent<Cell>().figure = null;
+            cellForMove.GetComponent<Cell>().figure.GetComponent<Figure>().step++;
+            cellForMove.GetComponent<Cell>().figure.transform.position = new Vector3(cellForMove.transform.position.x, 0.5f, cellForMove.transform.position.z);
+            whiteMove = !whiteMove;
+            CleaningKingIsAttackedMap(kingIsAttackedMap);
+        }
     }
 
     private void GetMovePawnMap(int i) {
@@ -504,17 +554,21 @@ public class BoardManager : MonoBehaviour {
                  break;   
             }
 
-            if (gridArray[posX + i, posY + i] != null && gridArray[posX + i, posY + i].GetComponent<Cell>().figure != null 
+            if (gridArray[posX + i, posY + i] != null && gridArray[posX + i, posY + i].GetComponent<Cell>().figure == null) {                   
+                gridArray[posX + i, posY + i].GetComponent<Cell>().canMove = true;
+                gridArray[posX + i, posY + i].GetComponent<Cell>().canNextMove = true; 
+                
+
+            } else if (gridArray[posX + i, posY + i] != null && gridArray[posX + i, posY + i].GetComponent<Cell>().figure != null 
                 && gridArray[posX + i, posY + i].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 gridArray[posX + i, posY + i].GetComponent<Cell>().canNextMove = true;
-                break;    
-            } else if (gridArray[posX + i, posY + i] != null && gridArray[posX + i, posY + i].GetComponent<Cell>().figure == null) {                   
-                gridArray[posX + i, posY + i].GetComponent<Cell>().canMove = true;
+                break;
 
             } else if (gridArray[posX + i, posY + i] != null && gridArray[posX + i, posY + i].GetComponent<Cell>().figure != null 
                 && gridArray[posX + i, posY + i].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 
                 gridArray[posX +  i, posY + i].GetComponent<Cell>().canMove = true;
+                
                 break;        
             }                        
         }
@@ -523,17 +577,20 @@ public class BoardManager : MonoBehaviour {
             if (gridArray[posX - i, posY - i] == null) {
                  break;   
             }
-            if (gridArray[posX - i, posY - i] != null && gridArray[posX - i, posY - i].GetComponent<Cell>().figure != null 
+
+            if (gridArray[posX - i, posY - i] != null && gridArray[posX - i, posY - i].GetComponent<Cell>().figure == null) {                   
+                gridArray[posX - i, posY - i].GetComponent<Cell>().canMove = true;
+                gridArray[posX - i, posY - i].GetComponent<Cell>().canNextMove = true;
+            } else if (gridArray[posX - i, posY - i] != null && gridArray[posX - i, posY - i].GetComponent<Cell>().figure != null 
                 && gridArray[posX - i, posY - i].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 gridArray[posX - i, posY - i].GetComponent<Cell>().canNextMove = true;
-                break;    
-            } else if (gridArray[posX - i, posY - i] != null && gridArray[posX - i, posY - i].GetComponent<Cell>().figure == null) {                   
-                gridArray[posX - i, posY - i].GetComponent<Cell>().canMove = true;
+                break;
 
             } else if (gridArray[posX - i, posY - i] != null && gridArray[posX - i, posY - i].GetComponent<Cell>().figure != null 
                 && gridArray[posX - i, posY - i].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 
                 gridArray[posX -  i, posY - i].GetComponent<Cell>().canMove = true;
+                
                 break;        
             }                        
         }
@@ -542,17 +599,19 @@ public class BoardManager : MonoBehaviour {
             if (gridArray[posX + i, posY - i] == null) {
                  break;   
             }
-            if (gridArray[posX + i, posY - i] != null && gridArray[posX + i, posY - i].GetComponent<Cell>().figure != null 
+
+            if (gridArray[posX + i, posY - i] != null && gridArray[posX + i, posY - i].GetComponent<Cell>().figure == null) {                   
+                gridArray[posX + i, posY - i].GetComponent<Cell>().canMove = true;
+                gridArray[posX + i, posY - i].GetComponent<Cell>().canNextMove = true;
+            } else if (gridArray[posX + i, posY - i] != null && gridArray[posX + i, posY - i].GetComponent<Cell>().figure != null 
                 && gridArray[posX + i, posY - i].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 gridArray[posX + i, posY - i].GetComponent<Cell>().canNextMove = true;
                 break;    
-            } else if (gridArray[posX + i, posY - i] != null && gridArray[posX + i, posY - i].GetComponent<Cell>().figure == null) {                   
-                gridArray[posX + i, posY - i].GetComponent<Cell>().canMove = true;
-
             } else if (gridArray[posX + i, posY - i] != null && gridArray[posX + i, posY - i].GetComponent<Cell>().figure != null 
                 && gridArray[posX + i, posY - i].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 
                 gridArray[posX +  i, posY - i].GetComponent<Cell>().canMove = true;
+                
                 break;        
             }                        
         }
@@ -561,17 +620,20 @@ public class BoardManager : MonoBehaviour {
             if (gridArray[posX - i, posY + i] == null) {
                  break;   
             }
-            if (gridArray[posX - i, posY + i] != null && gridArray[posX - i, posY + i].GetComponent<Cell>().figure != null 
+
+            if (gridArray[posX - i, posY + i] != null && gridArray[posX - i, posY + i].GetComponent<Cell>().figure == null) {                   
+                gridArray[posX - i, posY + i].GetComponent<Cell>().canMove = true;
+                gridArray[posX - i, posY + i].GetComponent<Cell>().canNextMove = true;
+
+            } else if (gridArray[posX - i, posY + i] != null && gridArray[posX - i, posY + i].GetComponent<Cell>().figure != null 
                 && gridArray[posX - i, posY + i].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 gridArray[posX - i, posY + i].GetComponent<Cell>().canNextMove = true;
-                break;    
-            } else if (gridArray[posX - i, posY + i] != null && gridArray[posX - i, posY + i].GetComponent<Cell>().figure == null) {                   
-                gridArray[posX - i, posY + i].GetComponent<Cell>().canMove = true;
-
+                break;
             } else if (gridArray[posX - i, posY + i] != null && gridArray[posX - i, posY + i].GetComponent<Cell>().figure != null 
                 && gridArray[posX - i, posY + i].GetComponent<Cell>().figure.GetComponent<Figure>().color != gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
                 
                 gridArray[posX -  i, posY + i].GetComponent<Cell>().canMove = true;
+                
                 break;        
             }                        
         }
@@ -635,7 +697,6 @@ public class BoardManager : MonoBehaviour {
             gridArray[posX, posY + 1].GetComponent<Cell>().canMove = true;        
         }       
 
-////////////////////////////
 
         if (gridArray[posX + 1, posY + 1] != null && gridArray[posX + 1, posY + 1].GetComponent<Cell>().figure != null 
             && gridArray[posX + 1, posY + 1].GetComponent<Cell>().figure.GetComponent<Figure>().color == gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().color) {
@@ -688,6 +749,50 @@ public class BoardManager : MonoBehaviour {
                 
             gridArray[posX -  1, posY + 1].GetComponent<Cell>().canMove = true;        
         }
+
+        if (gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().type == "WKing" && step == 1) {
+ 
+            if (gridArray[9, 4].GetComponent<Cell>().figure == null && gridArray[9, 3].GetComponent<Cell>().figure == null) {
+                if (gridArray[9, 2].GetComponent<Cell>().figure != null && gridArray[9, 2].GetComponent<Cell>().figure.GetComponent<Figure>().type == "WRook"
+                    && gridArray[9, 2].GetComponent<Cell>().figure.GetComponent<Figure>().step == 1
+                    && !gridArray[9, 3].GetComponent<Cell>().canNextMove) {
+                        gridArray[9, 3].GetComponent<Cell>().canMove = true;
+                }
+            }     
+        }
+
+        if (gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().type == "WKing" && step == 1) {
+ 
+            if (gridArray[9, 8].GetComponent<Cell>().figure == null && gridArray[9, 7].GetComponent<Cell>().figure == null
+                && gridArray[9, 6].GetComponent<Cell>().figure == null) {
+                if (gridArray[9, 9].GetComponent<Cell>().figure != null && gridArray[9, 9].GetComponent<Cell>().figure.GetComponent<Figure>().type == "WRook"
+                    && gridArray[9, 9].GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 && !gridArray[9, 7].GetComponent<Cell>().canNextMove) {
+                        gridArray[9, 7].GetComponent<Cell>().canMove = true;
+                }
+            }     
+        }
+        
+        if (gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" && step == 1) {
+ 
+            if (gridArray[2, 4].GetComponent<Cell>().figure == null && gridArray[2, 3].GetComponent<Cell>().figure == null) {
+                if (gridArray[2, 2].GetComponent<Cell>().figure != null && gridArray[2, 2].GetComponent<Cell>().figure.GetComponent<Figure>().type == "BRook"
+                    && gridArray[2, 2].GetComponent<Cell>().figure.GetComponent<Figure>().step == 1
+                    && !gridArray[2, 3].GetComponent<Cell>().canNextMove) {
+                        gridArray[2, 3].GetComponent<Cell>().canMove = true;
+                }
+            }     
+        }
+
+        if (gridArray[posX, posY].GetComponent<Cell>().figure.GetComponent<Figure>().type == "BKing" && step == 1) {
+ 
+            if (gridArray[2, 8].GetComponent<Cell>().figure == null && gridArray[2, 7].GetComponent<Cell>().figure == null
+                && gridArray[2, 6].GetComponent<Cell>().figure == null) {
+                if (gridArray[2, 9].GetComponent<Cell>().figure != null && gridArray[2, 9].GetComponent<Cell>().figure.GetComponent<Figure>().type == "BRook"
+                    && gridArray[2, 9].GetComponent<Cell>().figure.GetComponent<Figure>().step == 1 && !gridArray[2, 7].GetComponent<Cell>().canNextMove) {
+                        gridArray[2, 7].GetComponent<Cell>().canMove = true;
+                }
+            }     
+        } 
     }
 
     private void GetKingIsAttackedMap(bool[,] kingIsAttackedMap) {
@@ -721,7 +826,7 @@ public class BoardManager : MonoBehaviour {
                             kingIsAttackedMap[i, j] = true;
 
                             gridArray[i + 2, j + 2].GetComponent<Cell>().canMove = false;
-                            gridArray[i + 2, j + 2].GetComponent<Cell>().canNextMove = false;
+                            //gridArray[i + 2, j + 2].GetComponent<Cell>().canNextMove = false;
                         }
                     }
                 }
@@ -740,6 +845,14 @@ public class BoardManager : MonoBehaviour {
             for (int j = 0; j < 8; j++)
             {
                 kingIsAttackedMap[i, j] = false;
+            }
+        }
+    }
+
+    private void CleaningCanNextMoveCells() {
+        foreach (GameObject cell in gridArray) {
+            if (cell != null) {
+                cell.GetComponent<Cell>().canNextMove = false;
             }
         }
     }
@@ -795,7 +908,6 @@ public class BoardManager : MonoBehaviour {
                         return true;
                     }
                 }
-
             }
             return false;
         }   
